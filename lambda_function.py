@@ -8,7 +8,7 @@ def lambda_handler(event, context):
         </head>
         <body>
             <h1>Welcome to my Lambda-powered Web Page!</h1>
-            <pHi theree!</p>
+            <p>Hi theree!</p>
         </body>
     </html>
     """
