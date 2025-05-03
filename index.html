@@ -17,7 +17,7 @@
                 body: JSON.stringify({ name: name })
             });
             const data = await response.json();
-            document.getElementById('response').innerText = data.message;
+            document.getElementById('response').innerText = "updated ImageClipper" + data.message;
         }
     </script>
 </body>
