@@ -1,20 +1,19 @@
-name: Deploy to AWS Lambda
+name: Deploy Lambda
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout source
         uses: actions/checkout@v3
 
-      - name: Zip source code
-        run: zip -r function.zip . -x "*.git*" "*.github*"
+      - name: Zip lambda_function.py
+        run: zip function.zip lambda_function.py
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -23,7 +22,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Deploy to Lambda
+      - name: Update Lambda function
         run: |
           aws lambda update-function-code \
             --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
