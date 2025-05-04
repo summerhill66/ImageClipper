@@ -18,7 +18,7 @@ def lambda_handler(event, context):
 
 def handle_upload(event):
     try:
-　      print("UPLOAD EVENT:", json.dumps(event)) 
+        print("UPLOAD EVENT:", json.dumps(event)) 
         body = json.loads(event['body'])
         filename = body['filename']
         file_data = base64.b64decode(body['fileData'])
