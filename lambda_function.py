@@ -22,7 +22,7 @@ def lambda_handler(event, context):
 
 
 
-def render_gallery(event):
+def render_gallery():
     # List image files from S3 (limit to 100)
     objects = s3.list_objects_v2(Bucket=BUCKET_NAME)
 
