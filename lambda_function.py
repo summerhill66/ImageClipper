@@ -1,6 +1,9 @@
 import json
 import boto3
+import base64
 import os
+import cgi
+
 
 # Replace with your actual bucket name
 BUCKET_NAME = 's3-image-clipper-bucket'
@@ -8,9 +11,20 @@ BUCKET_NAME = 's3-image-clipper-bucket'
 s3 = boto3.client('s3')
 
 def lambda_handler(event, context):
+    method = event.get("httpMethod", "")
+    path = event.get("path", "")
+
+    if method == "POST" and path == "/upload":
+        return handle_upload(event)
+    else:
+        return render_gallery()
+
+
+
+
+def render_gallery(event, context):
     # List image files from S3 (limit to 100)
     objects = s3.list_objects_v2(Bucket=BUCKET_NAME)
-    # image_keys = [obj['Key'] for obj in objects.get('Contents', []) if obj['Key'].lower().endswith(('jpg', 'jpeg', 'png'))][:100]
 
     # Safely get the list of image keys (if any)
     contents = objects.get('Contents')
@@ -65,7 +79,7 @@ def lambda_handler(event, context):
         </script>
     </head>
     <body>
-        <h1>My Image Memo</h1>
+        <h1>Image Clipper</h1>
 
         <form action="/upload" method="POST" enctype="multipart/form-data">
             <input type="file" name="file">
