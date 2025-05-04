@@ -2,12 +2,8 @@ import json
 import boto3
 import base64
 import os
-import cgi
-import io
 
-# Replace with your actual bucket name
 BUCKET_NAME = 's3-image-clipper-bucket'
-
 s3 = boto3.client('s3')
 
 def lambda_handler(event, context):
@@ -19,22 +15,20 @@ def lambda_handler(event, context):
     else:
         return render_gallery()
 
+
 def handle_upload(event):
     try:
-        content_type = event["headers"].get("Content-Type") or event["headers"].get("content-type")
-        body = event["body"]
-        if event.get("isBase64Encoded"):
-            body = base64.b64decode(body)
+        body = json.loads(event['body'])
+        filename = body['filename']
+        file_data = base64.b64decode(body['fileData'])
+        content_type = body.get('contentType', 'image/jpeg')
 
-        environ = {'REQUEST_METHOD': 'POST'}
-        headers = {'content-type': content_type}
-        fs = cgi.FieldStorage(fp=io.BytesIO(body), environ=environ, headers=headers)
-
-        file_item = fs["file"]
-        filename = file_item.filename
-        file_data = file_item.file.read()
-
-        s3.put_object(Bucket=BUCKET_NAME, Key=filename, Body=file_data, ContentType='image/jpeg')  # ContentType
+        s3.put_object(
+            Bucket=BUCKET_NAME,
+            Key=filename,
+            Body=file_data,
+            ContentType=content_type
+        )
 
         return {
             "statusCode": 302,
@@ -49,19 +43,14 @@ def handle_upload(event):
         }
 
 
-
 def render_gallery():
-    # List image files from S3 (limit to 100)
     objects = s3.list_objects_v2(Bucket=BUCKET_NAME)
-
-    # Safely get the list of image keys (if any)
     contents = objects.get('Contents')
     image_keys = []
 
     if contents:
         image_keys = [obj['Key'] for obj in contents if obj['Key'].lower().endswith(('jpg', 'jpeg', 'png'))][:100]
 
-    # Build image HTML
     image_tags = ""
     for key in image_keys:
         url = f"https://{BUCKET_NAME}.s3.ap-northeast-1.amazonaws.com/{key}"
@@ -72,7 +61,6 @@ def render_gallery():
         </div>
         """
 
-    # Build HTML response
     html_content = f"""
     <html>
     <head>
@@ -85,7 +73,6 @@ def render_gallery():
             .modal-content {{ margin: 5% auto; display: block; max-width: 80%; }}
         </style>
         <script>
-            // Toggle delete checkboxes
             function toggleDeleteMode() {{
                 const checkboxes = document.querySelectorAll('.delete-checkbox');
                 const isVisible = checkboxes[0] && checkboxes[0].style.display === 'inline-block';
@@ -93,7 +80,6 @@ def render_gallery():
                 document.getElementById('delete-submit').style.display = isVisible ? 'none' : 'inline-block';
             }}
 
-            // Show image in fullscreen modal
             function enlargeImage(img) {{
                 const modal = document.getElementById('modal');
                 const modalImg = document.getElementById('modal-img');
@@ -104,13 +90,44 @@ def render_gallery():
             function closeModal() {{
                 document.getElementById('modal').style.display = 'none';
             }}
+
+            // Base64 upload handler
+            document.addEventListener("DOMContentLoaded", function() {{
+                const form = document.getElementById("uploadForm");
+                form.addEventListener("submit", async function(e) {{
+                    e.preventDefault();
+                    const fileInput = document.getElementById("fileInput");
+                    if (!fileInput.files.length) return alert("Please select a file.");
+                    const file = fileInput.files[0];
+                    const reader = new FileReader();
+
+                    reader.onload = async function() {{
+                        const base64Data = reader.result.split(',')[1];
+                        const res = await fetch("/upload", {{
+                            method: "POST",
+                            headers: {{ "Content-Type": "application/json" }},
+                            body: JSON.stringify({{
+                                filename: file.name,
+                                contentType: file.type,
+                                fileData: base64Data
+                            }})
+                        }});
+                        if (res.redirected) {{
+                            window.location.href = res.url;
+                        }} else {{
+                            alert("Upload failed.");
+                        }}
+                    }};
+                    reader.readAsDataURL(file);
+                }});
+            }});
         </script>
     </head>
     <body>
         <h1>Image Clipper</h1>
 
-        <form action="/upload" method="POST" enctype="multipart/form-data">
-            <input type="file" name="file">
+        <form id="uploadForm">
+            <input type="file" id="fileInput" name="file">
             <button type="submit">Upload Image</button>
         </form>
 
@@ -119,17 +136,4 @@ def render_gallery():
         <form action="/delete" method="POST">
             <div>{image_tags}</div>
             <button id="delete-submit" type="submit" style="display: none;">Confirm Delete</button>
-        </form>
-
-        <div id="modal" class="modal" onclick="closeModal()">
-            <img class="modal-content" id="modal-img">
-        </div>
-    </body>
-    </html>
-    """
-
-    return {
-        'statusCode': 200,
-        'headers': {'Content-Type': 'text/html'},
-        'body': html_content
-    }
+        </form
