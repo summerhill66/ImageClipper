@@ -3,7 +3,7 @@ import boto3
 import os
 
 # Replace with your actual bucket name
-BUCKET_NAME = 'your-s3-bucket-name'
+BUCKET_NAME = 'summerhill-s3-image-bucket'
 
 s3 = boto3.client('s3')
 
