@@ -17,8 +17,7 @@ def lambda_handler(event, context):
     image_keys = []
 
     if contents:
-    image_keys = [obj['Key'] for obj in contents if obj['Key'].lower().endswith(('jpg', 'jpeg', 'png'))][:100]
-
+        image_keys = [obj['Key'] for obj in contents if obj['Key'].lower().endswith(('jpg', 'jpeg', 'png'))][:100]
 
     # Build image HTML
     image_tags = ""
