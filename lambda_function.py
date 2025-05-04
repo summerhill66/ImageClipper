@@ -19,6 +19,34 @@ def lambda_handler(event, context):
     else:
         return render_gallery()
 
+def handle_upload(event):
+    try:
+        content_type = event["headers"].get("Content-Type") or event["headers"].get("content-type")
+        body = event["body"]
+        if event.get("isBase64Encoded"):
+            body = base64.b64decode(body)
+
+        environ = {'REQUEST_METHOD': 'POST'}
+        headers = {'content-type': content_type}
+        fs = cgi.FieldStorage(fp=io.BytesIO(body), environ=environ, headers=headers)
+
+        file_item = fs["file"]
+        filename = file_item.filename
+        file_data = file_item.file.read()
+
+        s3.put_object(Bucket=BUCKET_NAME, Key=filename, Body=file_data, ContentType='image/jpeg')  # ContentType
+
+        return {
+            "statusCode": 302,
+            "headers": {"Location": "/"},
+            "body": ""
+        }
+
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "body": f"Upload failed: {str(e)}"
+        }
 
 
 
