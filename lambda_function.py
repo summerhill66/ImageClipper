@@ -128,10 +128,10 @@ def render_gallery():
 
         <form id="uploadForm">
             <input type="file" id="fileInput" name="file">
-            <button type="submit">Upload Image</button>
+            <button type="submit">Upload</button>
         </form>
 
-        <button onclick="toggleDeleteMode()">Delete Images</button>
+        <button onclick="toggleDeleteMode()">Delete</button>
 
         <form action="/delete" method="POST">
             <div>{image_tags}</div>
