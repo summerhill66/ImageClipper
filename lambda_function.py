@@ -10,7 +10,15 @@ s3 = boto3.client('s3')
 def lambda_handler(event, context):
     # List image files from S3 (limit to 100)
     objects = s3.list_objects_v2(Bucket=BUCKET_NAME)
-    image_keys = [obj['Key'] for obj in objects.get('Contents', []) if obj['Key'].lower().endswith(('jpg', 'jpeg', 'png'))][:100]
+    # image_keys = [obj['Key'] for obj in objects.get('Contents', []) if obj['Key'].lower().endswith(('jpg', 'jpeg', 'png'))][:100]
+
+    # Safely get the list of image keys (if any)
+    contents = objects.get('Contents')
+    image_keys = []
+
+    if contents:
+    image_keys = [obj['Key'] for obj in contents if obj['Key'].lower().endswith(('jpg', 'jpeg', 'png'))][:100]
+
 
     # Build image HTML
     image_tags = ""
