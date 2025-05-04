@@ -128,12 +128,25 @@ def render_gallery():
 
         <form id="uploadForm">
             <input type="file" id="fileInput" name="file">
-            <button type="submit">Upload</button>
+            <button type="submit">Upload Image</button>
         </form>
 
-        <button onclick="toggleDeleteMode()">Delete</button>
+        <button onclick="toggleDeleteMode()">Delete Images</button>
 
         <form action="/delete" method="POST">
             <div>{image_tags}</div>
             <button id="delete-submit" type="submit" style="display: none;">Confirm Delete</button>
-        </form
+        </form>
+
+        <div id="modal" class="modal" onclick="closeModal()">
+            <img class="modal-content" id="modal-img">
+        </div>
+    </body>
+    </html>
+    """
+
+    return {
+        'statusCode': 200,
+        'headers': {'Content-Type': 'text/html'},
+        'body': html_content
+    }
