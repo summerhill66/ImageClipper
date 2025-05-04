@@ -105,7 +105,7 @@ def render_gallery():
 
                     reader.onload = async function() {{
                         const base64Data = reader.result.split(',')[1];
-                        const res = await fetch("/upload", {{
+                        const res = await fetch("https://oscm2ugtg6.execute-api.ap-northeast-1.amazonaws.com/prod/upload", {{
                             method: "POST",
                             headers: {{ "Content-Type": "application/json" }},
                             body: JSON.stringify({{
