@@ -3,7 +3,7 @@ import boto3
 import base64
 import os
 import cgi
-
+import io
 
 # Replace with your actual bucket name
 BUCKET_NAME = 's3-image-clipper-bucket'
