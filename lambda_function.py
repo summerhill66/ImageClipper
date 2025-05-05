@@ -34,13 +34,13 @@ def handle_upload(event):
         )
 
         return {
-            "statusCode": 302,
+            "statusCode": 200,
             "headers": {"Location": "/",
                         "Access-Control-Allow-Origin": "*",
                         "Access-Control-Allow-Headers": "Content-Type",
                         "Access-Control-Allow-Methods": "POST,OPTIONS"
                        },
-            "body": ""
+            "body": json.dumps({"message": "Upload success"})
         }
 
     except Exception as e:
@@ -67,13 +67,13 @@ def handle_delete(event):
             s3.delete_object(Bucket=BUCKET_NAME, Key=key)
 
         return {
-            "statusCode": 302,
+            "statusCode": 200,
             "headers": {"Location": "/",
                         "Access-Control-Allow-Origin": "*",
                         "Access-Control-Allow-Headers": "Content-Type",
                         "Access-Control-Allow-Methods": "POST,OPTIONS"
                        },
-            "body": ""
+            "body": json.dumps({"message": "Upload success"})
         }
 
     except Exception as e:
