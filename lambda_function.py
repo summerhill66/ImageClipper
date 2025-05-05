@@ -167,7 +167,7 @@ def render_gallery():
 
         <button onclick="toggleDeleteMode()">Delete Images</button>
 
-        <form action="/delete" method="POST">
+        <form action="https://oscm2ugtg6.execute-api.ap-northeast-1.amazonaws.com/prod/delete" method="POST">
             <div>{image_tags}</div>
             <button id="delete-submit" type="submit" style="display: none;">Confirm Delete</button>
         </form>
