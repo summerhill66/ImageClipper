@@ -12,6 +12,8 @@ def lambda_handler(event, context):
 
     if method == "POST" and path == "/upload":
         return handle_upload(event)
+    elif method == "POST" and path == "/delete":
+        return handle_delete(event)
     else:
         return render_gallery()
 
@@ -42,6 +44,36 @@ def handle_upload(event):
         return {
             "statusCode": 500,
             "body": f"Upload failed: {str(e)}"
+        }
+
+def handle_delete(event):
+    try:
+        content_type = event["headers"].get("Content-Type") or event["headers"].get("content-type")
+        body = event["body"]
+        if event.get("isBase64Encoded"):
+            body = base64.b64decode(body)
+
+        # Parse form data
+        environ = {'REQUEST_METHOD': 'POST'}
+        headers = {'content-type': content_type}
+        fs = cgi.FieldStorage(fp=io.BytesIO(body), environ=environ, headers=headers)
+
+        # Get the list of keys to delete (checkboxes)
+        keys = fs.getlist("delete_keys")
+
+        for key in keys:
+            s3.delete_object(Bucket=BUCKET_NAME, Key=key)
+
+        return {
+            "statusCode": 302,
+            "headers": {"Location": "/"},
+            "body": ""
+        }
+
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "body": f"Delete failed: {str(e)}"
         }
 
 
