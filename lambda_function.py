@@ -52,14 +52,24 @@ def handle_delete(event):
         body = event["body"]
         if event.get("isBase64Encoded"):
             body = base64.b64decode(body)
+        else:
+            body = body.encode()
 
-        # Parse form data
-        environ = {'REQUEST_METHOD': 'POST'}
-        headers = {'content-type': content_type}
-        fs = cgi.FieldStorage(fp=io.BytesIO(body), environ=environ, headers=headers)
+        # Extract boundary from content-type
+        boundary = content_type.split("boundary=")[-1]
+        delimiter = f"--{boundary}".encode()
 
-        # Get the list of keys to delete (checkboxes)
-        keys = fs.getlist("delete_keys")
+        # Split body by boundary
+        parts = body.split(delimiter)
+        keys = []
+
+        for part in parts:
+            if b'name="delete_keys"' in part:
+                # Extract value (S3 key)
+                key_line = part.strip().split(b"\r\n\r\n")[-1]
+                key = key_line.strip().decode()
+                if key:
+                    keys.append(key)
 
         for key in keys:
             s3.delete_object(Bucket=BUCKET_NAME, Key=key)
@@ -71,6 +81,7 @@ def handle_delete(event):
         }
 
     except Exception as e:
+        print("DELETE ERROR:", str(e))
         return {
             "statusCode": 500,
             "body": f"Delete failed: {str(e)}"
