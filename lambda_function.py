@@ -46,30 +46,18 @@ def handle_upload(event):
             "body": f"Upload failed: {str(e)}"
         }
 
+from urllib.parse import parse_qs
+
 def handle_delete(event):
     try:
-        content_type = event["headers"].get("Content-Type") or event["headers"].get("content-type")
+        print("DELETE EVENT:", event)
+
         body = event["body"]
         if event.get("isBase64Encoded"):
-            body = base64.b64decode(body)
-        else:
-            body = body.encode()
-
-        # Extract boundary from content-type
-        boundary = content_type.split("boundary=")[-1]
-        delimiter = f"--{boundary}".encode()
-
-        # Split body by boundary
-        parts = body.split(delimiter)
-        keys = []
-
-        for part in parts:
-            if b'name="delete_keys"' in part:
-                # Extract value (S3 key)
-                key_line = part.strip().split(b"\r\n\r\n")[-1]
-                key = key_line.strip().decode()
-                if key:
-                    keys.append(key)
+            body = base64.b64decode(body).decode()
+        
+        parsed = parse_qs(body) 
+        keys = parsed.get("delete_keys", [])
 
         for key in keys:
             s3.delete_object(Bucket=BUCKET_NAME, Key=key)
