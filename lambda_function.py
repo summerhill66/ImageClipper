@@ -35,7 +35,11 @@ def handle_upload(event):
 
         return {
             "statusCode": 302,
-            "headers": {"Location": "/"},
+            "headers": {"Location": "/",
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Headers": "Content-Type",
+                        "Access-Control-Allow-Methods": "POST,OPTIONS"
+                       },
             "body": ""
         }
 
@@ -64,7 +68,11 @@ def handle_delete(event):
 
         return {
             "statusCode": 302,
-            "headers": {"Location": "/"},
+            "headers": {"Location": "/",
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Headers": "Content-Type",
+                        "Access-Control-Allow-Methods": "POST,OPTIONS"
+                       },
             "body": ""
         }
 
