@@ -68,6 +68,7 @@ def handle_delete(event):
         return {
             "statusCode": 200, 
             "headers": {
+                "Location": "/",
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "Content-Type",
                 "Access-Control-Allow-Methods": "POST,OPTIONS"
@@ -165,6 +166,33 @@ def render_gallery():
                     reader.readAsDataURL(file);
                 }});
             }});
+
+            document.getElementById("deleteForm").addEventListener("submit", async function(e) {
+                e.preventDefault();
+                const checked = Array.from(document.querySelectorAll('.delete-checkbox:checked'));
+                if (checked.length === 0) {
+                    alert("Please select at least one image to delete.");
+                    return;
+                }
+        
+                const formData = new URLSearchParams();
+                checked.forEach(cb => formData.append("delete_keys", cb.value));
+        
+                const res = await fetch("/prod/delete", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: formData
+                });
+        
+                if (res.ok) {
+                    window.location.reload();
+                } else {
+                    alert("Delete failed.");
+                }
+            });
+            
         </script>
     </head>
     <body>
@@ -177,7 +205,7 @@ def render_gallery():
 
         <button onclick="toggleDeleteMode()">Delete Images</button>
 
-        <form action="https://oscm2ugtg6.execute-api.ap-northeast-1.amazonaws.com/prod/delete" method="POST">
+        <form id="deleteForm">
             <div>{image_tags}</div>
             <button id="delete-submit" type="submit" style="display: none;">Confirm Delete</button>
         </form>
