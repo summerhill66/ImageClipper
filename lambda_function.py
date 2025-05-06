@@ -135,6 +135,18 @@ def render_gallery():
             //Upload button addEventListener
             document.addEventListener("DOMContentLoaded", function() {{
                 const form = document.getElementById("uploadForm");
+                const fileInput = document.getElementById("fileInput");
+                const fileNameDisplay = document.getElementById("fileName");
+             
+                fileInput.addEventListener("change", function() {{
+                     if (fileInput.files.length > 0) {{
+                         const file = fileInput.files[0];
+                         fileNameDisplay.textContent = `Selected file: ${{file.name}}`;
+                     }} else {{
+                         fileNameDisplay.textContent = "No file selected";
+                     }}
+                }});
+                 
                 form.addEventListener("submit", async function(e) {{
                     e.preventDefault();
                     const fileInput = document.getElementById("fileInput");
