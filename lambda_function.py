@@ -172,7 +172,7 @@ def render_gallery():
         <h1>Image Clipper</h1>
 
         <form id="uploadForm">
-            <input type="file" id="fileInput" name="file">
+            <input type="file" id="fileInput" name="file" accept="image/*;capture=camera">
             <button type="submit">Upload Image</button>
         </form>
 
