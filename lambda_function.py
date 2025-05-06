@@ -133,6 +133,12 @@ def render_gallery():
             }}
 
             //Upload button addEventListener
+            function generateFilename(mimeType) {{
+                const ext = mimeType.split('/')[1] || 'jpg';
+                const uuid = crypto.randomUUID(); // UUID creation
+                return `photo-${uuid}.${ext}`;
+            }}
+            
             document.addEventListener("DOMContentLoaded", function() {{
                 const form = document.getElementById("uploadForm");
                 const fileInput = document.getElementById("fileInput");
@@ -140,8 +146,15 @@ def render_gallery():
              
                 fileInput.addEventListener("change", function() {{
                      if (fileInput.files.length > 0) {{
-                         const file = fileInput.files[0];
-                         fileNameDisplay.textContent = `Selected file: ${{file.name}}`;
+                        const file = fileInput.files[0];
+                        let nameToDisplay = file.name;
+        
+                        if (!nameToDisplay || nameToDisplay.toLowerCase() === "image.jpg") {{
+                            nameToDisplay = generateFilename(file.type);
+                        }}
+        
+                        fileInput.dataset.generatedFilename = nameToDisplay;
+                        fileNameDisplay.textContent = `Selected file: ${{nameToDisplay}}`;
                      }} else {{
                          fileNameDisplay.textContent = "No file selected";
                      }}
