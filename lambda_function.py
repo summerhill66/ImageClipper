@@ -226,7 +226,7 @@ def render_gallery():
     </html>
     """
 
-    html_content = f"""{html_template}"""
+    html_content = html_template.format(image_tags=image_tags)
 
     return {
         'statusCode': 200,
