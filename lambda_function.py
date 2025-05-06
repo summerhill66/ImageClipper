@@ -144,21 +144,7 @@ def render_gallery():
                 const fileInput = document.getElementById("fileInput");
                 const fileNameDisplay = document.getElementById("fileName");
              
-                fileInput.addEventListener("change", function() {{
-                     if (fileInput.files.length > 0) {{
-                        const file = fileInput.files[0];
-                        let nameToDisplay = file.name;
-        
-                        if (!nameToDisplay || nameToDisplay.toLowerCase() === "image.jpg") {{
-                            nameToDisplay = generateFilename(file.type);
-                        }}
-        
-                        fileInput.dataset.generatedFilename = nameToDisplay;
-                        fileNameDisplay.textContent = `Selected file: ${{nameToDisplay}}`;
-                     }} else {{
-                         fileNameDisplay.textContent = "No file selected";
-                     }}
-                }});
+
                  
                 form.addEventListener("submit", async function(e) {{
                     e.preventDefault();
