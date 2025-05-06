@@ -1,7 +1,7 @@
 import json
 import boto3
 import base64
-import os
+from urllib.parse import parse_qs
 
 BUCKET_NAME = 's3-image-clipper-bucket'
 s3 = boto3.client('s3')
@@ -20,13 +20,8 @@ def lambda_handler(event, context):
 
 def handle_upload(event):
     try:
-        print("UPLOAD EVENT:", json.dumps(event)) 
-
-        body = event["body"]
-        if event.get("isBase64Encoded", False):
-            body = base64.b64decode(body).decode("utf-8") 
-
-        body = json.loads(body)
+        print("UPLOAD EVENT:", json.dumps(event))
+        body = json.loads(event['body'])
         filename = body['filename']
         file_data = base64.b64decode(body['fileData'])
         content_type = body.get('contentType', 'image/jpeg')
@@ -53,20 +48,18 @@ def handle_upload(event):
         print("UPLOAD ERROR:", str(e))
         return {
             "statusCode": 500,
-            "body": json.dumps({"message": f"Upload failed: {str(e)}"})
+            "body": f"Upload failed: {str(e)}"
         }
 
-from urllib.parse import parse_qs
 
 def handle_delete(event):
     try:
         print("DELETE EVENT:", event)
-
         body = event["body"]
         if event.get("isBase64Encoded"):
             body = base64.b64decode(body).decode()
         
-        parsed = parse_qs(body) 
+        parsed = parse_qs(body)
         keys = parsed.get("delete_keys", [])
 
         for key in keys:
@@ -74,12 +67,13 @@ def handle_delete(event):
 
         return {
             "statusCode": 200,
-            "headers": {"Location": "/",
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Headers": "Content-Type",
-                        "Access-Control-Allow-Methods": "POST,OPTIONS"
-                       },
-            "body": json.dumps({"message": "Upload success"})
+            "headers": {
+                "Location": "/",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Methods": "POST,OPTIONS"
+            },
+            "body": json.dumps({"message": "Delete success"})
         }
 
     except Exception as e:
@@ -101,14 +95,14 @@ def render_gallery():
     image_tags = ""
     for key in image_keys:
         url = f"https://{BUCKET_NAME}.s3.ap-northeast-1.amazonaws.com/{key}"
-        image_tags += f"""
+        image_tags += """
         <div class="image-container">
             <input type="checkbox" class="delete-checkbox" name="delete_keys" value="{key}" style="display: none;">
             <img src="{url}" alt="{key}" onclick="enlargeImage(this)">
         </div>
-        """
+        """.format(key=key, url=url)
 
-    html_content = f"""
+    html_template = """
     <html>
     <head>
         <title>My Image Memo</title>
@@ -138,7 +132,6 @@ def render_gallery():
                 document.getElementById('modal').style.display = 'none';
             }}
 
-            // Base64 upload handler
             document.addEventListener("DOMContentLoaded", function() {{
                 const form = document.getElementById("uploadForm");
                 form.addEventListener("submit", async function(e) {{
@@ -149,10 +142,10 @@ def render_gallery():
                     const reader = new FileReader();
 
                     reader.onload = async function() {{
-                        if (!reader.result) {
+                        if (!reader.result) {{
                             alert("Failed to read file");
                             return;
-                        }
+                        }}
                         const base64Data = reader.result.split(',')[1];
                         const res = await fetch("https://oscm2ugtg6.execute-api.ap-northeast-1.amazonaws.com/prod/upload", {{
                             method: "POST",
@@ -163,11 +156,11 @@ def render_gallery():
                                 fileData: base64Data
                             }})
                         }});
-                        if (res.ok) {
+                        if (res.ok) {{
                             window.location.reload();
-                        } else {
+                        }} else {{
                             alert("Upload failed.");
-                        }
+                        }}
                     }};
                     reader.readAsDataURL(file);
                 }});
@@ -195,6 +188,8 @@ def render_gallery():
     </body>
     </html>
     """
+
+    html_content = html_template.format(image_tags=image_tags)
 
     return {
         'statusCode': 200,
