@@ -143,6 +143,11 @@ def render_gallery():
                     const reader = new FileReader();
 
                     reader.onload = async function() {{
+                        reader.onload = async function() {
+                        if (!reader.result) {
+                            alert("Failed to read file");
+                            return;
+                        }
                         const base64Data = reader.result.split(',')[1];
                         const res = await fetch("https://oscm2ugtg6.execute-api.ap-northeast-1.amazonaws.com/prod/upload", {{
                             method: "POST",
@@ -153,8 +158,8 @@ def render_gallery():
                                 fileData: base64Data
                             }})
                         }});
-                        if (res.redirected) {{
-                            window.location.href = res.url;
+                        if (res.ok) {{
+                            window.location.reload();
                         }} else {{
                             alert("Upload failed.");
                         }}
