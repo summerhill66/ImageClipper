@@ -216,7 +216,6 @@ def render_gallery():
 
         <form id="deleteForm">
             <div>{image_tags}</div>
-            <button id="delete-submit" type="submit" style="display: none;">Confirm Delete</button>
         </form>
 
         <div id="modal" class="modal" onclick="closeModal()">
