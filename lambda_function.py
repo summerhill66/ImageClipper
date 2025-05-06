@@ -21,7 +21,12 @@ def lambda_handler(event, context):
 def handle_upload(event):
     try:
         print("UPLOAD EVENT:", json.dumps(event)) 
-        body = json.loads(event['body'])
+
+        body = event["body"]
+        if event.get("isBase64Encoded", False):  # ← ここでチェック
+            body = base64.b64decode(body).decode("utf-8")  # ← デコードして文字列に
+
+        body = json.loads(body)  # ← その後でJSONに変換
         filename = body['filename']
         file_data = base64.b64decode(body['fileData'])
         content_type = body.get('contentType', 'image/jpeg')
@@ -35,11 +40,12 @@ def handle_upload(event):
 
         return {
             "statusCode": 200,
-            "headers": {"Location": "/",
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Headers": "Content-Type",
-                        "Access-Control-Allow-Methods": "POST,OPTIONS"
-                       },
+            "headers": {
+                "Location": "/",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Methods": "POST,OPTIONS"
+            },
             "body": json.dumps({"message": "Upload success"})
         }
 
@@ -47,7 +53,7 @@ def handle_upload(event):
         print("UPLOAD ERROR:", str(e))
         return {
             "statusCode": 500,
-            "body": f"Upload failed: {str(e)}"
+            "body": json.dumps({"message": f"Upload failed: {str(e)}"})
         }
 
 from urllib.parse import parse_qs
