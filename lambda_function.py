@@ -165,6 +165,33 @@ def render_gallery():
                     reader.readAsDataURL(file);
                 }});
             }});
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const deleteForm = document.querySelector('form[action$="/delete"]');
+                deleteForm.addEventListener("submit", async function (e) {
+                e.preventDefault();
+    
+                const formData = new FormData(deleteForm);
+                const params = new URLSearchParams();
+                for (const [key, value] of formData.entries()) {
+                    params.append(key, value);
+                }
+
+                const res = await fetch(deleteForm.action, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: params.toString()
+            });
+
+            if (res.ok) {
+                window.location.reload();
+            } else {
+                alert("Delete failed.");
+            }
+        });
+    });
         </script>
     </head>
     <body>
