@@ -157,11 +157,11 @@ def render_gallery():
                                 fileData: base64Data
                             }})
                         }});
-                        if (res.ok) {{
+                        if (res.ok) {
                             window.location.reload();
-                        }} else {{
+                        } else {
                             alert("Upload failed.");
-                        }}
+                        }
                     }};
                     reader.readAsDataURL(file);
                 }});
