@@ -136,7 +136,7 @@ def render_gallery():
             function generateFilename(mimeType) {{
                 const ext = mimeType.split('/')[1] || 'jpg';
                 const uuid = crypto.randomUUID(); // UUID creation
-                return `photo-${uuid}.${ext}`;
+                return `photo-${{uuid}}.${{ext}}`;
             }}
             
             document.addEventListener("DOMContentLoaded", function() {{
