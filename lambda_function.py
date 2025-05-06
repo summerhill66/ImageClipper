@@ -54,21 +54,30 @@ def handle_upload(event):
 
 def handle_delete(event):
     try:
-        print("DELETE EVENT:", event)
-        body = event["body"]
+        print("DELETE EVENT:", json.dumps(event))
+
+        body = event.get("body", "")
+        if not body:
+            raise ValueError("Empty request body")
+
         if event.get("isBase64Encoded"):
             body = base64.b64decode(body).decode()
 
+        print("PARSED BODY (raw):", body)
         parsed = parse_qs(body)
+        print("PARSED BODY (dict):", parsed)
+
         keys = parsed.get("delete_keys", [])
+        if not keys:
+            raise ValueError("No keys provided for deletion")
 
         for key in keys:
+            print(f"Deleting key: {key}")
             s3.delete_object(Bucket=BUCKET_NAME, Key=key)
 
         return {
-            "statusCode": 200, 
+            "statusCode": 200,
             "headers": {
-                "Location": "/",
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "Content-Type",
                 "Access-Control-Allow-Methods": "POST,OPTIONS"
@@ -80,7 +89,7 @@ def handle_delete(event):
         print("DELETE ERROR:", str(e))
         return {
             "statusCode": 500,
-            "body": f"Delete failed: {str(e)}"
+            "body": json.dumps({"message": f"Delete failed: {str(e)}"})
         }
 
 
