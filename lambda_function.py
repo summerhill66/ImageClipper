@@ -143,7 +143,6 @@ def render_gallery():
                     const reader = new FileReader();
 
                     reader.onload = async function() {{
-                        reader.onload = async function() {
                         if (!reader.result) {
                             alert("Failed to read file");
                             return;
