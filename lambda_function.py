@@ -110,8 +110,8 @@ def render_gallery():
             body {{ font-family: Arial, sans-serif; text-align: center; }}
             .image-container {{ display: inline-block; margin: 10px; position: relative; }}
             img {{ width: 150px; height: 150px; object-fit: cover; cursor: pointer; border: 1px solid #ccc; border-radius: 8px; }}
-            .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); }
-            .modal-content { margin: 5% auto; display: block; max-width: 90vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 0 10px #fff;}
+            .modal {{ display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 1000; }}
+            .modal-content {{ margin: 5% auto; display: block; width: 90vw; max-width: 100%; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 0 10px #fff;}}
         </style>
         <script>
             function toggleDeleteMode() {{
