@@ -132,7 +132,7 @@ def render_gallery():
                 document.getElementById('modal').style.display = 'none';
             }}
 
-            # Upload button addEventListener
+            //Upload button addEventListener
             document.addEventListener("DOMContentLoaded", function() {{
                 const form = document.getElementById("uploadForm");
                 form.addEventListener("submit", async function(e) {{
@@ -167,7 +167,7 @@ def render_gallery():
                 }});
             }});
 
-            # Delete button addEventListener
+            //Delete button addEventListener
             document.addEventListener("DOMContentLoaded", function () {
                 const deleteForm = document.querySelector('form[action$="/delete"]');
                 deleteForm.addEventListener("submit", async function (e) {
