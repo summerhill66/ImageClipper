@@ -133,53 +133,39 @@ def render_gallery():
             }}
 
             //Upload button addEventListener
-            document.addEventListener("DOMContentLoaded", function() {
+            document.addEventListener("DOMContentLoaded", function() {{
                 const form = document.getElementById("uploadForm");
-                const fileInput = document.getElementById("fileInput");
-                const fileNameDisplay = document.getElementById("fileName");
-            
-                // ファイル選択時にファイル名を表示する
-                fileInput.addEventListener("change", function() {
-                    if (fileInput.files.length > 0) {
-                        const file = fileInput.files[0];
-                        fileNameDisplay.textContent = `Selected file: ${file.name}`;
-                    } else {
-                        fileNameDisplay.textContent = "No file selected";
-                    }
-                });
-            
-                form.addEventListener("submit", async function(e) {
+                form.addEventListener("submit", async function(e) {{
                     e.preventDefault();
+                    const fileInput = document.getElementById("fileInput");
                     if (!fileInput.files.length) return alert("Please select a file.");
-                    
                     const file = fileInput.files[0];
                     const reader = new FileReader();
-            
-                    reader.onload = async function() {
-                        if (!reader.result) {
+
+                    reader.onload = async function() {{
+                        if (!reader.result) {{
                             alert("Failed to read file");
                             return;
-                        }
+                        }}
                         const base64Data = reader.result.split(',')[1];
-                        const res = await fetch("https://oscm2ugtg6.execute-api.ap-northeast-1.amazonaws.com/prod/upload", {
+                        const res = await fetch("https://oscm2ugtg6.execute-api.ap-northeast-1.amazonaws.com/prod/upload", {{
                             method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
+                            headers: {{ "Content-Type": "application/json" }},
+                            body: JSON.stringify({{
                                 filename: file.name,
                                 contentType: file.type,
                                 fileData: base64Data
-                            })
-                        });
-                        if (res.ok) {
+                            }})
+                        }});
+                        if (res.ok) {{
                             window.location.reload();
-                        } else {
+                        }} else {{
                             alert("Upload failed.");
-                        }
-                    };
+                        }}
+                    }};
                     reader.readAsDataURL(file);
-                });
-            });
-
+                }});
+            }});
         </script>
     </head>
     <body>
