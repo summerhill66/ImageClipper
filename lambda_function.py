@@ -68,7 +68,7 @@ def handle_delete(event):
         return {
             "statusCode": 302, 
             "headers": {
-                "Location": "/",
+                "Location": "https://oscm2ugtg6.execute-api.ap-northeast-1.amazonaws.com/prod/",
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "Content-Type",
                 "Access-Control-Allow-Methods": "POST,OPTIONS"
