@@ -191,6 +191,13 @@ def render_gallery():
                     reader.readAsDataURL(file);
                 }});
             }});
+
+            function saveMemo() {{
+                const memo = document.getElementById('memo-text').value;
+                const imgSrc = document.getElementById('modal-img').src;
+                alert(`Saving memo for: ${{imgSrc}}\nMemo: ${{memo}}`);
+            }}
+            
         </script>
     </head>
     <body>
@@ -210,7 +217,12 @@ def render_gallery():
         </form>
 
         <div id="modal" class="modal" onclick="closeModal()">
+          <div style="text-align: center; padding-top: 20px;">
             <img class="modal-content" id="modal-img">
+            <textarea id="memo-text" placeholder="Add your memo..." style="width: 80%; height: 100px; margin-top: 10px;"></textarea>
+            <br>
+            <button onclick="saveMemo()" style="margin-top: 10px;">Save Memo</button>
+          </div>
         </div>
     </body>
     </html>
