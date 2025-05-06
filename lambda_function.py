@@ -66,14 +66,14 @@ def handle_delete(event):
             s3.delete_object(Bucket=BUCKET_NAME, Key=key)
 
         return {
-            "statusCode": 200, 
+            "statusCode": 302, 
             "headers": {
                 "Location": "/",
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "Content-Type",
                 "Access-Control-Allow-Methods": "POST,OPTIONS"
             },
-            "body": json.dumps({"message": "Delete success"})
+            "body": ""
         }
 
     except Exception as e:
