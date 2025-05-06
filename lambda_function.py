@@ -23,10 +23,10 @@ def handle_upload(event):
         print("UPLOAD EVENT:", json.dumps(event)) 
 
         body = event["body"]
-        if event.get("isBase64Encoded", False):  # ← ここでチェック
-            body = base64.b64decode(body).decode("utf-8")  # ← デコードして文字列に
+        if event.get("isBase64Encoded", False):
+            body = base64.b64decode(body).decode("utf-8") 
 
-        body = json.loads(body)  # ← その後でJSONに変換
+        body = json.loads(body)
         filename = body['filename']
         file_data = base64.b64decode(body['fileData'])
         content_type = body.get('contentType', 'image/jpeg')
