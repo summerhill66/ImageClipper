@@ -167,6 +167,7 @@ def render_gallery():
                 }});
             }});
 
+            /*
             document.addEventListener("DOMContentLoaded", function () {
                 const deleteForm = document.querySelector('form[action$="/delete"]');
                 if (!deleteForm) {
@@ -198,7 +199,7 @@ def render_gallery():
                     }
                 });
             });
-
+            */
         </script>
     </head>
     <body>
