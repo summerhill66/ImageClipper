@@ -66,7 +66,7 @@ def handle_delete(event):
             s3.delete_object(Bucket=BUCKET_NAME, Key=key)
 
         return {
-            "statusCode": 302, 
+            "statusCode": 200, 
             "headers": {
                 "Location": "/", 
                 "Access-Control-Allow-Origin": "*",
