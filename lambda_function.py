@@ -68,7 +68,6 @@ def handle_delete(event):
         return {
             "statusCode": 200, 
             "headers": {
-                "Location": "/", 
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "Content-Type",
                 "Access-Control-Allow-Methods": "POST,OPTIONS"
